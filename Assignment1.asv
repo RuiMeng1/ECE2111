@@ -1,0 +1,22 @@
+clc;clear all;close all
+%% 1.1
+sqrt(-1); % 0.0000 + 1.0000i
+i + j; % 0.0000 + 2.0000i
+1i + 1j; % 0.0000 + 2.0000i
+
+z1 = 1 + 1j;
+fprintf("abs(z1) = %.4d\n", abs(z1));
+fprintf("angle(z1) = %.4d\n", angle(z1)); % radians
+fprintf("real(z1) = %.4d\n", real(z1));
+fprintf("imag(z1) = %.4d\n", imag(z1));
+
+z2 = 2*exp(1j*pi/3);
+
+fprintf("abs(z1 + z2) = %.4d\n", abs(z1 + z2));
+
+z3 = 7*exp(1j*pi/5);
+
+scatter(real(z3), imag(z3), 'filled');
+title("Plot of z3");
+legend("z3");
+
