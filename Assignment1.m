@@ -27,16 +27,39 @@ clc;clear all;close all
 
 [x1, nx] = dtimpulse(1,-1,4);
 [x2, nx] = dtimpulse(2,-1,4);
-stem(nx,x1-x2);
+stem(nx,x1-x2); % graph A
 title('Graph of x vs time');
 xlabel('n (time in samples)');
 ylabel('x[n]');
 
+% 2.3a
+[u0, nx] = dtstep(0,-5,5);
+x0n = exp(0.3.*nx).*u0;
 
+% b
+[in2, nx] = dtimpulse(-2,-5,5);
+[i4, nx] = dtimpulse(4,-5,5);
+x1n = in2 - i4;
 
+% c
+% 0≤𝑛≤20
+% 𝑥2[𝑛]=𝑛(𝑢[𝑛]−𝑢[𝑛−10])+10𝑒(−0.3(𝑛−10))(𝑢[𝑛−10]−𝑢[𝑛−20])
 
+[u0, nx] = dtstep(0,0,20);
+[u10, nx] = dtstep(10,0,20);
+[u20, nx] = dtstep(20,0,20);
 
+x2n = nx.*(u0 - u10) + 10*exp(-0.3.*(nx-10)).*(u10 - u20);
+plot(nx, x2n)
+title("x2[n]")
 
+function [x, n] = dtstep(n0, n1, n2)
+% dtstep: returns the unit step function x[n] = u[n - n0]
+%         over range n1:n2
+    n = n1:n2;
+    x = zeros(1, length(n));
+    x(n>=n0) = 1;
+end
 function [x, n] = dtimpulse(n0, n1, n2)
 % dtimpulse: returns discrete-time unit impulse function
 % centered at n0 over time range n1:n2
