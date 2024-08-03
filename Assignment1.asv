@@ -97,6 +97,8 @@ xs = cos(2*pi*440.*t);
 
 % sound(xs, fs);
 
+printf("hello");
+
 ys = 2.*xs;
 sound(ys,fs);
 %% functions
