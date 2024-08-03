@@ -53,6 +53,21 @@ x2n = nx.*(u0 - u10) + 10*exp(-0.3.*(nx-10)).*(u10 - u20);
 plot(nx, x2n)
 title("x2[n]")
 
+
+
+%% 3
+clc; clear all; close all;
+ty = -2:0.01:2;
+y = (ty).^2;
+
+t = linspace(-10, 10, 201);
+
+
+
+
+
+
+%% functions
 function [x, n] = dtstep(n0, n1, n2)
 % dtstep: returns the unit step function x[n] = u[n - n0]
 %         over range n1:n2
@@ -70,3 +85,5 @@ n = n1:n2;
 x = zeros(1,length(n));
 x(n==n0) = 1;
 end 
+
+
