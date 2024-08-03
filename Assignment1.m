@@ -88,6 +88,17 @@ title("x = exp(j*10*pi*t)")
 
 x(t==1);
 
+%% 4
+clc;clear all;close all;
+fs = 8192; % hz
+
+t = linspace(0,3,fs*3);
+xs = cos(2*pi*440.*t);
+
+% sound(xs, fs);
+
+ys = 2.*xs;
+sound(ys,fs);
 %% functions
 function [x, n] = dtstep(n0, n1, n2)
 % dtstep: returns the unit step function x[n] = u[n - n0]
