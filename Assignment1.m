@@ -61,11 +61,32 @@ ty = -2:0.01:2;
 y = (ty).^2;
 
 t = linspace(-10, 10, 201);
+x1 = t.*exp(abs(t));
+x2 = abs(t).*exp(abs(t));
+x = 0.5.*(x1+x2);
 
+subplot(3,1,1);
+plot(t, x1);
+title("x1 = t*exp(|t|)")
+subplot(3,1,2);
+plot(t, x2);
+title("x2 = |t|*exp(|t|)")
+subplot(3,1,3);
+plot(t,x);
+title("x = 0.5*(x1+x2)")
 
+x(t==-1)
+%% 3.2
+clc; close all; clear all;
+t = linspace(0,1,101);
+x = exp(1j*10*pi.*t);
+hold on
+plot(t,real(x));
+plot(t,imag(x));
+legend("real part of x", "imaginary part of x")
+title("x = exp(j*10*pi*t)")
 
-
-
+x(t==1)
 
 %% functions
 function [x, n] = dtstep(n0, n1, n2)
