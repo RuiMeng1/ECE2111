@@ -86,7 +86,7 @@ plot(t,imag(x));
 legend("real part of x", "imaginary part of x")
 title("x = exp(j*10*pi*t)")
 
-x(t==1)
+x(t==1);
 
 %% functions
 function [x, n] = dtstep(n0, n1, n2)
