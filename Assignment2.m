@@ -1,22 +1,44 @@
-%% main
-% Example inputs
-x1 = [1, 2, 3];
-nin1 = [0, 1, 2];
-x2 = [4, 5];
-nin2 = [1, 2];
+%% 2
+clc;clear all; close all;
+n = 0:3;
+dn = [1,0,0,0];
+un = ones(4);
 
-% Call the function
-[y, nout] = sumsys(x1, nin1, x2, nin2);
+[yout, nout] = sumsys(dn,n,un,n); % testing sumsys
 
-% Display the results
-disp('Output y:');
-disp(y);
-disp('Output nout:');
-disp(nout);
+%% 4
+clc; clear all; close all;
+n = 0:3;
+dn = [1,0,0,0];
+[yout, nout] = delaysys(dn,n, 4)
+
+%% 5
+clc;clear all;close all;
+[x1,nx1] = dtimpulse(1,-1,4);
+[x2,nx2] = dtimpulse(2,-1,4);
+[z,nz] = sumsys(x1,nx1,x2,nx2);
+[y,ny] = delaysys(1,z,nz);
+stem(ny,y);
+title("Graph of y vs time")
+%% 6
+
+%% 3
+function [y, ny] = delaysys(N, x, nx)
+    ny = nx;
+    y = [];
+    for n = ny
+        newY = 0;
+        if any(nx == n - N)
+            newY = x(nx == n - N);
+        end
+        y = [y, newY];
+    end
+
+end
 
 
 
-%% 1
+%% 2
 function [y, nout] = sumsys(x1, nin1, x2, nin2)
     % Initialize nout
     nout = [];
@@ -64,3 +86,15 @@ function [y, nout] = sumsys(x1, nin1, x2, nin2)
         y = [y, newY];
     end
 end
+
+%% other functions
+function [x, n] = dtimpulse(n0, n1, n2)
+% dtimpulse: returns discrete-time unit impulse function
+% centered at n0 over time range n1:n2
+% [x, n] = dtimpulse(n0, n1, n2)
+% where n0, n1, and n2 are integers with n1 <= n0 <= n2,
+% produces signal x[n] = delta[n-n0] for n1 <= n <= n2.
+n = n1:n2;
+x = zeros(1,length(n));
+x(n==n0) = 1;
+end 
