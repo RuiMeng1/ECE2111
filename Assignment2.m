@@ -20,7 +20,32 @@ clc;clear all;close all;
 [y,ny] = delaysys(1,z,nz);
 stem(ny,y);
 title("Graph of y vs time")
+%% 6 TESTING
+clc; clear all; close all;
+load AUDUSD;
+
+[average, nout] = threepointaverage(aud,taud);
+
+hold on;
+plot(taud,aud);
+plot(nout, average);
 %% 6
+function [y, nout] = threepointaverage(x, nin)
+% y = 1/3 * x2[n] + 1/3 * x1[n] + 1/3 * x[n], x2 = Delay2[x], x1 = Delay1[x]
+% creating x1 and x2 using delaysys
+x1 = delaysys(1,x,nin);
+x2 = delaysys(2,x,nin);
+
+nout = nin;
+
+u = x*1/3;
+u1 = x1 * 1/3;
+w = sumsys(u, nin, u1, nin);
+
+u2 = x2 * 1/3;
+y = sumsys(w,nin,u2,nin);
+end
+
 
 %% 3
 function [y, ny] = delaysys(N, x, nx)
@@ -35,9 +60,6 @@ function [y, ny] = delaysys(N, x, nx)
     end
 
 end
-
-
-
 %% 2
 function [y, nout] = sumsys(x1, nin1, x2, nin2)
     % Initialize nout
