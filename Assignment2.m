@@ -37,30 +37,24 @@ ylim([0.68,0.8])
 
 %% 7 Testing
 clc;clear all; close all;
-L = 1000;
-K = -0.1;
+L = 100;
+K = -1;
 [x, n] = dtstep(0,-2,L);
 [y, ny] = feedbacksys(x,n,K);
 plot(ny,y);
 
 %% 7
 function [y, nout] = feedbacksys(x, nin, K)
-    % y = Delay2(U)
-    % U = Ky + x
-    % w = Delay2(Ky + x)
+
     % first two values of y are 0 since y[n - 2] and y[n - 1] don't exist
-    y = [];
-    nout = [];
-    for n = nin
-        if n == 1 || n == 2
-            y = [y, 0];
+    y = zeros(1,length(x));
+    nout = nin;
+    for i = 1:length(nin)
+        if i == 1 || i == 2
+            y(i) = 0;
         else
-            [u, nu] = sumsys(K * y, nout, x, nin);
-            [w, nw]  = delaysys(2, u, nu);
-            newY = w(nw == n);
-            y = [y, newY];
+            y(i) = x(nin == (nin(i) - 2)) + K*y(nin == (nin(i) - 2));
         end
-        nout = [nout, n];
     end
 end
 %% 6
