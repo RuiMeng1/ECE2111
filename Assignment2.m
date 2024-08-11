@@ -10,7 +10,7 @@ un = ones(4);
 clc; clear all; close all;
 n = 0:3;
 dn = [1,0,0,0];
-[yout, nout] = delaysys(dn,n, 4)
+[yout, nout] = delaysys(dn,n, 4);
 
 %% 5
 clc;clear all;close all;
@@ -26,9 +26,43 @@ load AUDUSD;
 
 [average, nout] = threepointaverage(aud,taud);
 
-hold on;
-plot(taud,aud);
-plot(nout, average);
+subplot(2,1,1);
+plot(taud,aud, 'r');
+title("AUD/USD");
+ylim([0.68,0.8])
+subplot(2,1,2);
+plot(nout, average, 'g');
+title("3 Point Average AUD/USD");
+ylim([0.68,0.8])
+
+%% 7 Testing
+clc;clear all; close all;
+L = 1000;
+K = -0.1;
+[x, n] = dtstep(0,-2,L);
+[y, ny] = feedbacksys(x,n,K);
+plot(ny,y);
+
+%% 7
+function [y, nout] = feedbacksys(x, nin, K)
+    % y = Delay2(U)
+    % U = Ky + x
+    % w = Delay2(Ky + x)
+    % first two values of y are 0 since y[n - 2] and y[n - 1] don't exist
+    y = [];
+    nout = [];
+    for n = nin
+        if n == 1 || n == 2
+            y = [y, 0];
+        else
+            [u, nu] = sumsys(K * y, nout, x, nin);
+            [w, nw]  = delaysys(2, u, nu);
+            newY = w(nw == n);
+            y = [y, newY];
+        end
+        nout = [nout, n];
+    end
+end
 %% 6
 function [y, nout] = threepointaverage(x, nin)
 % y = 1/3 * x2[n] + 1/3 * x1[n] + 1/3 * x[n], x2 = Delay2[x], x1 = Delay1[x]
@@ -62,50 +96,16 @@ function [y, ny] = delaysys(N, x, nx)
 end
 %% 2
 function [y, nout] = sumsys(x1, nin1, x2, nin2)
-    % Initialize nout
-    nout = [];
-    
-    % nin2 is below nin1
-    if nin2(end) < nin1(end) && nin2(1) < nin1(1)
-        i = 1;
-        while i <= length(nin2) && nin2(i) < nin1(1)
-            nout = [nout, nin2(i)];
-            i = i + 1;
-        end
-        nout = [nout, nin1];
-    end
-    
-    % nin2 is above nin1
-    if nin2(end) > nin1(end) && nin2(1) > nin1(1)
-        i = 1;
-        while i <= length(nin1) && nin1(i) < nin2(1)
-            nout = [nout, nin1(i)];
-            i = i + 1;
-        end
-        nout = [nout, nin2];
-    end
-    
-    % nin2 has nin1 as a subset of itself
-    if nin2(end) >= nin1(end) && nin2(1) <= nin1(1)
-        nout = nin2;
-    end
-    
-    % nin1 has nin2 as a subset of itself
-    if nin2(end) <= nin1(end) && nin2(1) >= nin1(1)
-        nout = nin1;
-    end
-    
-    % calculate y
-    y = [];
-    for n = nout
-        newY = 0;
+    nout = union(nin1, nin2);
+    y = zeros(1, length(nout));
+    for i = 1:length(nout)
+        n = nout(i);
         if any(nin1 == n)
-            newY = newY + x1(nin1 == n);
+            y(i) = y(i) + x1(nin1 == n);
         end
         if any(nin2 == n)
-            newY = newY + x2(nin2 == n);
+            y(i) = y(i) + x2(nin2 == n);
         end
-        y = [y, newY];
     end
 end
 
@@ -120,3 +120,11 @@ n = n1:n2;
 x = zeros(1,length(n));
 x(n==n0) = 1;
 end 
+function [x, n] = dtstep(n0, n1, n2)
+% dtstep: returns the unit step function x[n] = u[n - n0]
+%         over range n1:n2
+    n = n1:n2;
+    x = zeros(1, length(n));
+    x(n>=n0) = 1;
+end
+
