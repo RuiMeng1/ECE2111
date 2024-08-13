@@ -1,19 +1,25 @@
 % skeleton script for ECE2111 workshop 4
-
+TODO = 0;
 % sampling rate
-Fs = 8192;
+Fs = 8192;     
 
 % echo system has difference equation
 % y[n] = x[n] + (1/5)*x[n-Fs] + ...
-%              (1/10)*x[n-2*F2] + ...
-%              (1/15)*x[n-3*F2] + ...
-%              (1/20)*x[n-4*F2]
+%              (1/10)*x[n-2*Fs] + ...
+%              (1/15)*x[n-3*Fs] + ...
+%              (1/20)*x[n-4*Fs]
 
 %% task 1: define vectors necho and hecho that represent the impulse
 % response of the echo system
 maxechoes = 4;
 % insert your code below to define necho and hecho
 
+hecho = [];
+necho = [];
+for i = 1:4
+    [h,n] = dtimpulse(i*Fs,0,4*Fs);
+    [hecho, necho] = sumsys(hecho, necho, h, n);
+end
 
 %% (no change needed here)
 % defines a signal xscale that plays the C major scale
@@ -33,16 +39,16 @@ end
 
 %% task 2: pass the C scale signal through the echo system by using convolution
 % play the resulting sound.
+% compute the convolution of xscale and hecho
 
-% uncomment and complete
-% yecho = 
+yecho = conv(xscale, hecho);
 
 
 % pause() ensures subsequent calls to soundsc  
 % don't play on top of each other
 % uncomment next two lines to play the echo
-% soundsc(yecho,Fs)
-% pause();
+soundsc(yecho,Fs)
+pause();
 
 %% upsample the C scale signal to L=5 times the sampling rate
 L = 5;
