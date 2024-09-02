@@ -1,0 +1,120 @@
+%% 1.1
+clc; close all;
+
+N = 80;
+Fs = 160;
+
+t = linspace(0,1,Fs); % 160 samples per second
+n = 0:N-1;
+z = cos(4*pi.*t);
+figure(1)
+stem(n,z(1:80)) % cos(pi n/40)
+title("cos(pi n/40)");
+
+% fourier for z
+Zk = fft(z(1:N))/N;
+Zk_shifted = fftshift(Zk);
+k = -floor(N/2):(N-1-floor(N/2)); % frequency axis
+
+figure(2)
+stem(k, abs(Zk_shifted))
+title("Zk coefficients")
+
+%fourier for w
+Nw = 70;
+w = z(1:Nw);
+Wk = fft(w(1:Nw))/Nw;
+Wk_shifted = fftshift(Wk);
+kw = -floor(Nw/2):(Nw-1-floor(Nw/2)); % frequency axis
+figure(3)
+stem(kw, abs(Wk_shifted))
+title("Wk coefficients")
+
+%%
+clc; close all;
+Fs = 8192;
+Ts = 1/Fs;
+N = 8192;
+
+% compute DTFS
+Xk1 = fft(xdtmf1)/N;
+Xk2 = fft(xdtmf2)/N;
+Xk3 = fft(xdtmf3)/N;
+Xk4 = fft(xdtmf4)/N;
+Xk7 = fft(xdtmf7)/N;
+Xka = fft(xdtmfa)/N;
+
+% shift to center at k = 0
+Xk1_shifted = fftshift(Xk1);
+Xk2_shifted = fftshift(Xk2);
+Xk3_shifted = fftshift(Xk3);
+Xk4_shifted = fftshift(Xk4);
+Xk7_shifted = fftshift(Xk7);
+Xka_shifted = fftshift(Xka);
+
+% define frequency index vector
+ks = -floor(N/2):(N-1-floor(N/2));
+
+% plot the magnitudes
+figure(1)
+stem(ks,abs(Xk1_shifted))
+title("xdtmf1")
+
+figure(2)
+stem(ks,abs(Xk2_shifted))
+title("xdtmf2")
+
+figure(3)
+stem(ks,abs(Xk3_shifted))
+title("xdtmf3")
+ 
+figure(4)
+stem(ks,abs(Xk4_shifted))
+title("xdtmf4")
+
+figure(5)
+stem(ks,abs(Xk7_shifted))
+title("xdtmf7")
+
+figure(6)
+stem(ks,abs(Xka_shifted))
+title("xdtmfa")
+
+%%
+close all; clc;
+signal = ydtmf(1:length(ydtmf)/2);
+N = length(signal);
+Yk = fft(signal)/N;
+Yk_shift = fftshift(Yk);
+ks = -floor(N/2):(N-1-floor(N/2));
+figure(8)
+stem(ks,Yk_shift);
+title("Yk Coefficients")
+
+% has frequencies: 770Hz and 1336Hz
+
+%% 3
+clc;close all;
+M = Fst * 0.03;
+P = length(y)/M;
+
+yseg = reshape(y,M,P);
+
+% compute fourier series 
+Yseg = fft(yseg)/M;
+maxval = max(abs(Yseg(:)));
+
+% Set threshold
+threshold = 0.01;
+
+% Create Ysegtrunc by keeping only the coefficients larger than threshold * maxval
+Ysegtrunc = Yseg .* (abs(Yseg) > threshold * maxval);
+
+% Convert Ysegtrunc to a sparse matrix
+Ysegtrunc_sparse = sparse(Ysegtrunc);
+
+% Compare memory usage
+memoryInfo = whos;
+fprintf('Memory used by Ysegtrunc: %d bytes\n', memoryInfo(strcmp({memoryInfo.name}, 'Ysegtrunc')).bytes);
+fprintf('Memory used by Ysegtrunc_sparse: %d bytes\n', memoryInfo(strcmp({memoryInfo.name}, 'Ysegtrunc_sparse')).bytes);
+

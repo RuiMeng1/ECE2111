@@ -3,14 +3,17 @@
 N = 100;
 Tsamp = 1/N;
 ts = (0:1:N-1)*Tsamp;
-xtri = (2/pi)*asin(cos(2*pi*ts));
+xtri = (2/pi)*asin(cos(2*pi*ts)); 
 
 figure(1);
 plot(ts,xtri,'Linewidth',2)
 
 %% compute the discrete-time Fourier series coefficients
 % uncomment and complete
-% Xtri = ;
+% Compute the Discrete Fourier Transform (DFT)
+close all; clc;
+Xtri = fft(xtri)/N;
+
 
 % plot the 
 % -- magnitude 
@@ -18,5 +21,17 @@ plot(ts,xtri,'Linewidth',2)
 % -- phase 
 % of the fourier series coefficients on separate axes 
 % (insert code below)
+% Frequency axis
+ks = -floor(N/2):(N-1-floor(N/2));
 
+% Plot magnitude
+figure(1);
+stem(ks, abs(fftshift(Xtri)))
+% Plot log magnitude
+figure(2)
+stem(ks, log10(abs(fftshift(Xtri))))
+
+% Plot phase
+figure(3);
+stem(ks, angle(fftshift(Xtri)))
 
